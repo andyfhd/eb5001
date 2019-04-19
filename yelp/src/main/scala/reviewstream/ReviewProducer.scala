@@ -8,7 +8,6 @@ import org.apache.commons.io.FileUtils
 import scala.util.Random
 
 object ReviewProducer extends App {
-  // WebLog config
   val wlc = Settings.ReviewGen
 
   val Businesses = scala.io.Source.fromInputStream(getClass.getResourceAsStream("/businesses.csv")).getLines().toArray
@@ -36,14 +35,15 @@ object ReviewProducer extends App {
       val reviewer = Users(rnd.nextInt(Users.length - 1))
       val business = Businesses(rnd.nextInt(Businesses.length - 1))
 
-      val line = s"$adjustedTimestamp\t$stars\t$reviewer\t$business\n"
+//      val line = s"$adjustedTimestamp\t$stars\t$reviewer\t$business\n"
+      val line = s"$stars.0,$business,$reviewer\n"
       fw.write(line)
 
       if (iteration % incrementTimeEvery == 0) {
         println(s"Sent $iteration messages!")
         val sleeping = rnd.nextInt(incrementTimeEvery * 60)
         println(s"Sleeping for $sleeping ms")
-        Thread sleep sleeping
+//        Thread sleep sleeping
       }
 
     }

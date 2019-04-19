@@ -1,13 +1,13 @@
 import com.twitter.algebird.{HLL, HyperLogLogMonoid}
-import domain.ReviewByBusiness
+import domain.RatingByBusiness
 import org.apache.spark.streaming.State
 
 package object functions {
-  def mapReviewStateFunc = (k: (String, Long), v: Option[ReviewByBusiness], state: State[(Long, Long, Long, Long, Long)]) => {
+  def mapRatingStateFunc = (k: (String, Long), v: Option[RatingByBusiness], state: State[(Long, Long, Long, Long, Long)]) => {
     var (one_star_count, two_star_count, three_star_count, four_star_count, five_star_count) = state.getOption().getOrElse((0L, 0L, 0L, 0L, 0L))
 
     val newVal = v match {
-      case Some(a: ReviewByBusiness) => (a.one_star_count, a.two_star_count, a.three_star_count, a.four_star_count, a.five_star_count)
+      case Some(a: RatingByBusiness) => (a.one_star_count, a.two_star_count, a.three_star_count, a.four_star_count, a.five_star_count)
       case _ => (0L, 0L, 0L, 0L, 0L)
     }
 
@@ -28,7 +28,7 @@ package object functions {
     underExposed
   }
 
-  def mapReviewersStateFunc = (k: (String, Long), v: Option[HLL], state: State[HLL]) => {
+  def mapReviewersStateFunc = (k: String, v: Option[HLL], state: State[HLL]) => {
     val currentReviewerHLL = state.getOption().getOrElse(new HyperLogLogMonoid(12).zero)
     val newReviewerHLL = v match {
       case Some(reviewerHLL) => currentReviewerHLL + reviewerHLL

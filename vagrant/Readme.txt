@@ -16,7 +16,7 @@ bin/flume-ng agent --conf ./conf/ -f conf/flume.conf -Dflume.root.logger=DEBUG,c
 
 
 submit local
-/pluralsight/spark/bin/spark-submit --class streaming.StreamingJob2 /vagrant/yelp-1.0-SNAPSHOT-shaded.jar
+/pluralsight/spark/bin/spark-submit --class streaming.StreamingJob /vagrant/yelp-1.0-SNAPSHOT-shaded.jar
 
 
 submit cluster

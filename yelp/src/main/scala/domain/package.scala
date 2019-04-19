@@ -6,7 +6,7 @@ package object domain {
                     //inputProps: Map[String, String] = Map()
                      )
 
-  case class ReviewByBusiness(business : String,
+  case class RatingByBusiness(business : String,
                               timestamp_hour : Long,
                               one_star_count : Long,
                               two_star_count : Long,
@@ -14,5 +14,5 @@ package object domain {
                               four_star_count : Long,
                               five_star_count : Long)
 
-  case class ReviewerByBusiness(product : String, timestamp_hour : Long, unique_reviewers : Long)
+  case class ReviewerByBusiness(business : String, unique_reviewers : Long)
 }

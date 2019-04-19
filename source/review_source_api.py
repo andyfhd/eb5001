@@ -3,6 +3,7 @@ import time
 import pandas as pd
 import requests
 from flask import jsonify
+from threading import Thread
 import schedule
 import time
 import os
@@ -19,21 +20,24 @@ def get_payload(data, header):
     ]
     return json.dumps(_payload)
 
+def send(url, payload, header, time_out):
+    requests.post(url, data=payload, headers=header, timeout=time_out)
+
 def post_review(data_frame=None, name='default'):
 
     print('>> Job Run {}'.format(name))
     URL_FLUME = 'http://localhost:9001'
     HEADER = {'content-type': 'text/plain'}
     TIME_OUT = 5
-    SAMPLE = 1
+    SAMPLE = 2
     sample_frame = data_frame.sample(SAMPLE)
 
-    body = str(current_milli_time())+'\t'+'\t'.join(sample_frame[0:1].values.flatten())
-    payload = get_payload(body, HEADER)
-    #print(payload)
-    response = requests.post(URL_FLUME, data=payload, headers=HEADER, timeout=TIME_OUT)
-    #print(response)
-    #print(response.text)
+    for i in range(SAMPLE):
+        body = str(current_milli_time())+'\t'+'\t'.join(sample_frame[i:i+1].values.flatten())
+        payload = get_payload(body, HEADER)
+        
+        process = Thread(target=send, args=[URL_FLUME, payload, HEADER, TIME_OUT])
+        process.start()       
 
 
 if __name__ == '__main__':
@@ -48,20 +52,11 @@ if __name__ == '__main__':
                              ]]
     
     _df_review['stars'] = _df_review['stars'].apply(lambda x: str(x))
-    # _df_review = _df_review[['review_id',
-    #                          'business_id',
-    #                          'user_id',
-    #                          'cool',
-    #                          'funny',
-    #                          'stars',
-    #                          'useful',
-    #                          'text']]
 
-    schedule.every(1).seconds.do(post_review, _df_review, name="every 1 second")
-    schedule.every(1).seconds.do(post_review, _df_review, name="every 1 second")
-    schedule.every(1).seconds.do(post_review, _df_review, name="every 1 second")
-    schedule.every(2).seconds.do(post_review, _df_review, name="every 2 second")
-    schedule.every(3).seconds.do(post_review, _df_review, name="every 3 second")
+    # schedule.every(1).seconds.do(post_review, _df_review, name="every 1 second")
+    schedule.every(1).to(5).seconds.do(post_review, _df_review, name="every 1 to 5 seconds")
+    schedule.every(1).to(5).seconds.do(post_review, _df_review, name="every 1 to 5 seconds")
+    schedule.every(1).to(5).seconds.do(post_review, _df_review, name="every 1 to 5 seconds")
     schedule.every(1).to(5).seconds.do(post_review, _df_review, name="every 1 to 5 seconds")
     schedule.every(1).to(5).seconds.do(post_review, _df_review, name="every 1 to 5 seconds")
 

@@ -21,14 +21,17 @@ def get_payload(data, header):
     return json.dumps(_payload)
 
 def send(url, payload, header, time_out):
-    requests.post(url, data=payload, headers=header, timeout=time_out)
+    try:
+        requests.post(url, data=payload, headers=header, timeout=time_out)
+    except Exception as e:
+        pass
 
 def post_review(data_frame=None, name='default'):
 
     print('>> Job Run {}'.format(name))
     URL_FLUME = 'http://localhost:9001'
     HEADER = {'content-type': 'text/plain'}
-    TIME_OUT = 5
+    TIME_OUT = 0.01
     SAMPLE = 2
     sample_frame = data_frame.sample(SAMPLE)
 

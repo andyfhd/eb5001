@@ -35,15 +35,15 @@ object ReviewProducer extends App {
       val reviewer = Users(rnd.nextInt(Users.length - 1))
       val business = Businesses(rnd.nextInt(Businesses.length - 1))
 
-//      val line = s"$adjustedTimestamp\t$stars\t$reviewer\t$business\n"
-      val line = s"$stars.0,$business,$reviewer\n"
+      val line = s"$adjustedTimestamp\t$stars.0\t$reviewer\t$business\n"
+//      val line = s"$stars.0,$business,$reviewer\n"
       fw.write(line)
 
       if (iteration % incrementTimeEvery == 0) {
         println(s"Sent $iteration messages!")
         val sleeping = rnd.nextInt(incrementTimeEvery * 60)
         println(s"Sleeping for $sleeping ms")
-//        Thread sleep sleeping
+        Thread sleep sleeping
       }
 
     }
@@ -52,7 +52,5 @@ object ReviewProducer extends App {
     val outputFile = FileUtils.getFile(s"${destPath}data_$timestamp")
     println(s"Moving produced data to $outputFile")
     FileUtils.moveFile(FileUtils.getFile(filePath), outputFile)
-    val sleeping = 5000
-    println(s"Sleeping for $sleeping ms")
   }
 }

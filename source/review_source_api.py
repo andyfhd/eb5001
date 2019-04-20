@@ -60,8 +60,7 @@ if __name__ == '__main__':
     schedule.every(1).to(5).seconds.do(post_review, _df_review, name="every 1 to 5 seconds")
     schedule.every(1).to(5).seconds.do(post_review, _df_review, name="every 1 to 5 seconds")
     schedule.every(1).to(5).seconds.do(post_review, _df_review, name="every 1 to 5 seconds")
-    schedule.every(1).to(5).seconds.do(post_review, _df_review, name="every 1 to 5 seconds")
-    schedule.every(1).to(5).seconds.do(post_review, _df_review, name="every 1 to 5 seconds")
+
 
 
     while 1:

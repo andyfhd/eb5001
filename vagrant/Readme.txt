@@ -7,12 +7,14 @@
 - install flume (mine is 1.9.0 but doesn't really matter)
 - copy jar to this shared dir to submit
 
+Open Terminal
+cd /cygdrive/c/Users/dongdong/VirtualBox\ VMs/vagrant_file/vagrant/
 
 Useful Commands
 vagrant
 
-start flume agent (/vagrant/apache-flume-1.9.0-bin)
-bin/flume-ng agent --conf ./conf/ -f conf/flume.conf -Dflume.root.logger=DEBUG,console -n agent_review
+start flume agent
+/vagrant/apache-flume-1.9.0-bin/bin/flume-ng agent --conf /vagrant/apache-flume-1.9.0-bin/conf/ -f /vagrant/apache-flume-1.9.0-bin/conf/flume.conf -Dflume.root.logger=DEBUG,console -n agent_review
 
 
 submit local
@@ -24,6 +26,10 @@ submit cluster
 
 
 
+HDFS Commands:
+hdfs dfs -list /
+hdfs dfs -rm -r /flume
+hdfs dfs -cat /flume/yelp/2019-04-20/events-0409.1555733355201
 
 host
 vagrant/source python review_source_api.py

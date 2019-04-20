@@ -33,3 +33,8 @@ hdfs dfs -cat /flume/yelp/2019-04-20/events-0409.1555733355201
 
 host
 vagrant/source python review_source_api.py
+
+Useful links:
+localhost:50070 (HDFS, Utilites->Browse File System)
+localhost:8988 (Zeppelin, code not uploaded yet)
+

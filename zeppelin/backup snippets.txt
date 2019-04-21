@@ -1,7 +1,3 @@
-ssc.checkpoint("hdfs://lambda-pluralsight:9000/spark/checkpoint")
-
-
-
 val inputPath = "file:///vagrant/input"
 val textDStream = ssc.textFileStream(inputPath)
 val reviewStream = textDStream.transform( input => {

@@ -24,7 +24,6 @@ object StreamingJob {
       val ssc = new StreamingContext(sc, batchDuration)
       val flumeStream = FlumeUtils.createStream(ssc, "localhost", 8122)
         .map(e => new String(e.event.getBody.array))
-        .cache()
 
       flumeStream.foreachRDD(rdd => {
         println(s"batch received at: ${System.currentTimeMillis()}, total reviews: ${rdd.count()}")
@@ -46,7 +45,7 @@ object StreamingJob {
       val ratingStateSpec =
         StateSpec
           .function(mapRatingStateFunc)
-          .timeout(Minutes(120))
+          .timeout(Minutes(600))
 
       val statefulRatingByBusiness = reviewStream.transform(rdd => {
         val df = rdd.toDF()
@@ -91,16 +90,12 @@ object StreamingJob {
         }
         rdd.sortBy(_._2._5, false).take(3) foreach (sr => println(sr._1._1, sr._1._2, sr._2._1, sr._2._2, sr._2._3, sr._2._4, sr._2._5))
       })
-      //      ratingStateSnapshot.foreachRDD(rdd => {
-      //        println(s"ratingStateSnapshot: ${rdd.count()}")
-      //        rdd.foreach(sr => println(sr._1._1, sr._1._2, sr._2._1, sr._2._2, sr._2._3, sr._2._4, sr._2._5))
-      //      })
 
       // unique reviewers by business
       val reviewerStateSpec =
         StateSpec
           .function(mapReviewersStateFunc)
-          .timeout(Minutes(120))
+          .timeout(Minutes(600))
 
       val hll = new HyperLogLogMonoid(12)
       val statefulReviewersByBusiness = reviewStream.map(a => {
@@ -119,29 +114,6 @@ object StreamingJob {
         }
         rdd.sortBy(_._2, false).take(3).foreach(rec => println(rec._1, rec._2))
       })
-      //      reviewerStateSnapshot
-      //        .reduceByKeyAndWindow(
-      //          (a, b) => b,
-      //          (x, y) => x,
-      //          Seconds(windowDuringSecond / batchDuringSecond * batchDuringSecond),
-      //          filterFunc = (record) => false
-      //        ) // only save or expose the snapshot every x seconds
-      //        .foreachRDD(rdd => rdd.map(sr => ReviewerByBusiness(sr._1, sr._2.approximateSize.estimate))
-      //        .toDF().registerTempTable("ReviewerByBusiness"))
-
-      //      val topTenBusiness = sqlContext.sql(
-      //        """SELECT
-      //                                            *
-      //                                            from ReviewerByBusiness
-      //                                            """)
-      //      topTenBusiness.printSchema()
-      //      topTenBusiness.foreach(line => println(line))
-
-      //      reviewerStateSnapshot.foreachRDD(rdd => {
-      //        println(s"reviewerStateSnapshot: ${rdd.count()}")
-      //        rdd.foreach(sr => println(sr._1, sr._2.approximateSize.estimate))
-      //      })
-
       ssc
     }
 

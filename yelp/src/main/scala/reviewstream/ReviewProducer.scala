@@ -22,14 +22,15 @@ object ReviewProducer extends App {
     val fw = new FileWriter(filePath, true)
 
     // introduce some randomness to time increments for demo purposes
-    val incrementTimeEvery = rnd.nextInt(wlc.records - 1) + 1
+    val incrementTimeEvery = rnd.nextInt(1000) + 1
 
     var timestamp = System.currentTimeMillis()
     var adjustedTimestamp = timestamp
 
     for (iteration <- 1 to wlc.records) {
-      adjustedTimestamp = adjustedTimestamp + ((System.currentTimeMillis() - timestamp) * wlc.timeMultiplier)
-      timestamp = System.currentTimeMillis() // move all this to a function
+        adjustedTimestamp = adjustedTimestamp + rnd.nextInt(10000)
+//      adjustedTimestamp = adjustedTimestamp + ((System.currentTimeMillis() - timestamp) * wlc.timeMultiplier)
+//      timestamp = System.currentTimeMillis() // move all this to a function
       val stars = ((iteration + rnd.nextInt(200)) % 5) + 1
 
       val reviewer = Users(rnd.nextInt(Users.length - 1))
@@ -39,12 +40,12 @@ object ReviewProducer extends App {
 //      val line = s"$stars.0,$business,$reviewer\n"
       fw.write(line)
 
-      if (iteration % incrementTimeEvery == 0) {
-        println(s"Sent $iteration messages!")
-        val sleeping = rnd.nextInt(incrementTimeEvery * 60)
-        println(s"Sleeping for $sleeping ms")
-        Thread sleep sleeping
-      }
+//      if (iteration % incrementTimeEvery == 0) {
+//        println(s"Sent $iteration messages!")
+//        val sleeping = rnd.nextInt(10)
+//        println(s"Sleeping for $sleeping ms")
+//        Thread sleep sleeping
+//      }
 
     }
     fw.close()

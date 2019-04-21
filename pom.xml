@@ -150,6 +150,12 @@
             <artifactId>joda-convert</artifactId>
             <version>1.7</version>
         </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>com.databricks</groupId>-->
+            <!--<artifactId>spark-csv_2.11</artifactId>-->
+            <!--<version>1.5.0</version>-->
+        <!--</dependency>-->
     </dependencies>
     <build>
         <sourceDirectory>src/main/scala</sourceDirectory>

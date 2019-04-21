@@ -1,0 +1,50 @@
+ssc.checkpoint("hdfs://lambda-pluralsight:9000/spark/checkpoint")
+
+
+
+val inputPath = "file:///vagrant/input"
+val textDStream = ssc.textFileStream(inputPath)
+val reviewStream = textDStream.transform( input => {
+  input.flatMap{ line =>
+    val record = line.split("\\t")
+    val MS_IN_HOUR = 1000 * 60 * 60
+    if (record.length == 4)
+      Some(Review(record(0).toLong / MS_IN_HOUR * MS_IN_HOUR, record(1), record(2), record(3)))
+    else
+      None
+  }
+} )
+
+reviewStream.foreachRDD( rdd => {
+  val df = rdd.toDF()
+  df.registerTempTable("review")
+  val ratingByBusiness = sqlContext.sql("""SELECT
+                                            business,
+                                            timestamp_hour,
+                                            sum(case when stars = '1.0' then 1 else 0 end) as one_star_count,
+                                            sum(case when stars = '2.0' then 1 else 0 end) as two_star_count,
+                                            sum(case when stars = '3.0' then 1 else 0 end) as three_star_count,
+                                            sum(case when stars = '4.0' then 1 else 0 end) as four_star_count,
+                                            sum(case when stars = '5.0' then 1 else 0 end) as five_star_count
+                                            from review
+                                            group by business, timestamp_hour """)
+  ratingByBusiness.registerTempTable("ratingByBusiness")
+
+} )
+
+
+
+
+ssc.start()
+
+
+
+
+
+%sql
+select
+    from_unixtime(timestamp_hour / 1000, "MM-dd HH:mm:00") as timestamphour, business, one_star_count, two_star_count, three_star_count, four_star_count, five_star_count
+from
+    ratingByBusiness
+order by five_star_count desc
+limit 10
